@@ -1,9 +1,9 @@
 package org.devops
 
-def clone(){
-    git branch: "${env.nameBranch}", url: "${env.UrlGitHub}"
+def clone(String branch, String repoUrl) {
+    git branch: branch, url: repoUrl
 }
 
-def install(){
+def install() {
     sh 'npm install'
 }

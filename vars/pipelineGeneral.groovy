@@ -3,7 +3,7 @@ def call() {
         agent any
 
         tools {
-            nodejs 'NodeJS' // Asegúrate de que "NodeJS" esté configurado en Jenkins
+            nodejs 'NodeJS'
         }
 
         environment {
@@ -22,9 +22,9 @@ def call() {
             stage('Build Artefacto') {
                 steps {
                     script {
-                        echo "Building the artefacto"
-                        // Llamada a la librería para la construcción del artefacto
-                        org.devops.lb_buildartefacto.build()
+                        echo "Cloning repository and installing dependencies"
+                        org.devops.lb_buildartefacto.clone(env.nameBranch, env.UrlGitHub)
+                        org.devops.lb_buildartefacto.install()
                     }
                 }
             }
@@ -33,8 +33,7 @@ def call() {
                 steps {
                     script {
                         echo "Running SonarQube analysis"
-                        // Llamada a la librería para el análisis de SonarQube
-                        org.devops.lb_analisissonarqube.runAnalysis()
+                        org.devops.lb_analisissonarqube.analisisSonar(env.PROJECT_NAME, '.')
                     }
                 }
             }
