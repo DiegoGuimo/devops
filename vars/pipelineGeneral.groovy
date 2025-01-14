@@ -7,7 +7,8 @@ def call() {
         }
 
         environment {
-            PROJECT_NAME = env.GIT_URL.tokenize('/').last().replace('.git', '')
+            nameBranch = "${env.GIT_BRANCH ?: 'master'}"
+            UrlGitHub = "${env.GIT_URL ?: 'https://github.com/DiegoGuimo/FrontEnd.git'}"
         }
 
         stages {
@@ -33,7 +34,7 @@ def call() {
                 steps {
                     script {
                         echo "Running SonarQube analysis"
-                        org.devops.lb_analisissonarqube.analisisSonar(env.PROJECT_NAME, env.SOURCE ?: 'src')
+                        org.devops.lb_analisissonarqube.analisisSonar(env.PROJECT_NAME, '.')
                     }
                 }
             }
