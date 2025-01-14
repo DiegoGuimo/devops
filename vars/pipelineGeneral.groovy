@@ -33,7 +33,7 @@ def call() {
                 steps {
                     script {
                         echo "Running SonarQube analysis"
-                        org.devops.lb_analisissonarqube.analisisSonar(env.PROJECT_NAME, '.')
+                        org.devops.lb_analisissonarqube.analisisSonar(env.PROJECT_NAME, env.SOURCE ?: 'src')
                     }
                 }
             }
