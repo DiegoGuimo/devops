@@ -1,7 +1,7 @@
 package org.devops
 
 def analisisSonar(gitName) {
-    def scannerHome = tool 'SonarScannerHome'
+    def scannerHome = tool 'sonar-scanner'
     if(scannerHome) {
         withSonarQubeEnv('sonar-scanner') {
             sh "${scannerHome}/bin/sonar-scanner \
