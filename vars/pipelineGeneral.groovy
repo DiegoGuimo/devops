@@ -25,7 +25,7 @@ def call() {
             stage('Clonar y Construir') {
                 steps {
                     script {
-                        load 'devops/src/org/devops/lb_buildartefacto.groovy'
+                        def lb_buildartefacto = load 'devops/src/org/devops/lb_buildartefacto.groovy'
 
                         lb_buildartefacto.clone()
                         lb_buildartefacto.install()
