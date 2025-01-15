@@ -1,5 +1,4 @@
-// pipelineGeneral.groovy
-
+// devops/vars/pipelineGeneral.groovy
 def call() {
     pipeline {
         agent any  // Ejecutar en cualquier agente disponible
@@ -14,6 +13,8 @@ def call() {
             stage('Clonar y Construir') {
                 steps {
                     script {
+                        // Llamar a las funciones de lb_buildartefacto
+                        load 'devops/src/org/devops/lb_buildartefacto.groovy'
                         lb_buildartefacto.clone()
                         lb_buildartefacto.install()
                     }
