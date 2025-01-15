@@ -6,8 +6,8 @@ def pipelineGeneral() {
             nodejs 'NodeJS'  // Asegúrate de que esta herramienta esté configurada en Jenkins
         }
         environment {
-            nameBranch = 'master'  // Puedes personalizar esto según tus necesidades
-            UrlGitHub = 'https://github.com/DiegoGuimo/react-test-jenkinsfile'
+            nameBranch = 'main'  // Puedes personalizar esto según tus necesidades
+            UrlGitHub = 'https://github.com/tuusuario/react-test-jenkinsfile'
         }
         stages {
             stage('Clonar y Construir') {
