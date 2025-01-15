@@ -1,20 +1,30 @@
-// devops/vars/pipelineGeneral.groovy
 def call() {
     pipeline {
-        agent any  // Ejecutar en cualquier agente disponible
+        agent any
         tools {
-            nodejs 'NodeJS'  // Asegúrate de que esta herramienta esté configurada en Jenkins
+            nodejs 'NodeJS'
         }
         environment {
-            nameBranch = 'master'  // Puedes personalizar esto según tus necesidades
+            nameBranch = 'master'  // Personaliza la rama según sea necesario
             UrlGitHub = 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git'
         }
         stages {
+            stage('Clonar Repositorios') {
+                steps {
+                    script {
+                        // Clonamos el repositorio del Jenkinsfile
+                        git url: "${env.UrlGitHub}", branch: "${env.nameBranch}"
+                        
+                        // Clonamos el repositorio de las bibliotecas
+                        dir('devops') {
+                            git url: 'https://github.com/DiegoGuimo/devops.git', branch: 'feature'
+                        }
+                    }
+                }
+            }
             stage('Clonar y Construir') {
                 steps {
                     script {
-                        // Llamar a las funciones de lb_buildartefacto
-                        load 'devops/src/org/devops/lb_buildartefacto.groovy'
                         lb_buildartefacto.clone()
                         lb_buildartefacto.install()
                     }
