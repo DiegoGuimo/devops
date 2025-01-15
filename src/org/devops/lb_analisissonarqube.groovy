@@ -1,17 +1,13 @@
 package org.devops
 
-def testCoverage() {
-    sh 'npm test'
-}
-
 def analisisSonar(gitName) {
-    def scannerHome = tool 'sonar-scanner'
+    def scannerHome = tool 'SonarScannerHome'
     if(scannerHome) {
         withSonarQubeEnv('sonar-scanner') {
             sh "${scannerHome}/bin/sonar-scanner \
             -Dsonar.projectKey=${gitName} \
             -Dsonar.projectName=${gitName} \
-            -Dsonar.sources=${env.source} \
+            -Dsonar.sources=${env.SOURCE} \
             -Dsonar.tests=src/test \
             -Dsonar.exclusions=***/*.test.js \
             -Dsonar.testExecutionReportPaths=./test-report.xml \
@@ -21,3 +17,4 @@ def analisisSonar(gitName) {
         error 'SonarQube Scanner not found'
     }
 }
+return this

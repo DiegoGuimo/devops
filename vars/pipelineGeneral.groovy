@@ -5,19 +5,23 @@ def call() {
             nodejs 'NodeJS'
         }
         environment {
-            nameBranch = 'master'  // Personaliza la rama según sea necesario
-            UrlGitHub = 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git'
+            GIT_BRANCH_1 = 'master'  // Rama del repositorio donde está el Jenkinsfile
+            GIT_URL_1 = 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git'  // URL del repositorio con el Jenkinsfile
+            GIT_URL_2 = 'https://github.com/DiegoGuimo/devops.git'  // URL del repositorio de las bibliotecas
+            NodeJS = 'NodeJS'  // Herramienta de Node.js
+            SonarScannerHome = 'sonar-scanner'  // Herramienta de SonarScanner
+            SOURCE = 'src'  // Directorio de los archivos fuente para el análisis
         }
         stages {
             stage('Clonar Repositorios') {
                 steps {
                     script {
-                        // Clonamos el repositorio del Jenkinsfile
-                        git url: "${env.UrlGitHub}", branch: "${env.nameBranch}"
+                        // Clonamos el repositorio donde está el Jenkinsfile
+                        git url: "${env.GIT_URL_1}", branch: "${env.GIT_BRANCH_1}"
                         
-                        // Clonamos el repositorio de las bibliotecas
+                        // Clonamos el repositorio donde están las bibliotecas
                         dir('devops') {
-                            git url: 'https://github.com/DiegoGuimo/devops.git', branch: 'feature'
+                            git url: "${env.GIT_URL_2}", branch: 'feature'
                         }
                     }
                 }
@@ -35,14 +39,15 @@ def call() {
             stage('Análisis de SonarQube') {
                 steps {
                     script {
-                        analisisSonar(env.nameBranch)
+                        def lb_analisissonarqube = load 'devops/src/org/devops/lb_analisissonarqube.groovy'
+                        lb_analisissonarqube.analisisSonar(env.GIT_BRANCH_1)
                     }
                 }
             }
             stage('Pruebas') {
                 steps {
                     script {
-                        testCoverage()
+                        sh 'npm test'
                     }
                 }
             }
