@@ -1,5 +1,6 @@
 // pipelineGeneral.groovy
-def pipelineGeneral() {
+
+def call() {
     pipeline {
         agent any  // Ejecutar en cualquier agente disponible
         tools {
