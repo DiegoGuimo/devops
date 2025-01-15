@@ -1,43 +1,37 @@
-def call() {
-    tools {
-        nodejs 'NodeJS'
-    }
-
-    environment {
-        nameBranch = "${env.GIT_BRANCH ?: 'master'}"
-        UrlGitHub = "${env.GIT_URL ?: 'https://github.com/DiegoGuimo/FrontEnd.git'}"
-    }
-
-    stage('Setup') {
-        steps {
-            script {
-                echo "Setting up environment for project: ${env.PROJECT_NAME}"
-            }
+// pipelineGeneral.groovy
+def pipelineGeneral() {
+    pipeline {
+        agent any  // Ejecutar en cualquier agente disponible
+        tools {
+            nodejs 'NodeJS'  // Asegúrate de que esta herramienta esté configurada en Jenkins
         }
-    }
-
-    stage('Build Artefacto') {
-        steps {
-            script {
-                echo "Cloning repository and installing dependencies"
-                org.devops.lb_buildartefacto.clone(env.nameBranch, env.UrlGitHub)
-                org.devops.lb_buildartefacto.install()
-            }
+        environment {
+            nameBranch = 'master'  // Puedes personalizar esto según tus necesidades
+            UrlGitHub = 'https://github.com/DiegoGuimo/react-test-jenkinsfile'
         }
-    }
-
-    stage('Análisis SonarQube') {
-        steps {
-            script {
-                echo "Running SonarQube analysis"
-                org.devops.lb_analisissonarqube.analisisSonar(env.PROJECT_NAME, '.')
+        stages {
+            stage('Clonar y Construir') {
+                steps {
+                    script {
+                        lb_buildartefacto.clone()
+                        lb_buildartefacto.install()
+                    }
+                }
             }
-        }
-    }
-
-    post {
-        always {
-            echo "Pipeline completed for project: ${env.PROJECT_NAME}"
+            stage('Análisis de SonarQube') {
+                steps {
+                    script {
+                        analisisSonar(env.nameBranch)
+                    }
+                }
+            }
+            stage('Pruebas') {
+                steps {
+                    script {
+                        testCoverage()
+                    }
+                }
+            }
         }
     }
 }
