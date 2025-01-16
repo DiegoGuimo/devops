@@ -6,7 +6,7 @@ def call() {
         }
         environment {
             GIT_BRANCH_1 = 'master'  // Rama del repositorio donde está el Jenkinsfile
-            GIT_URL_1 = 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git'  // URL del repositorio con el Jenkinsfile
+            GIT_URL_1 = 'https://github.com/DiegoGuimo/FrontEnd.git'  // URL del repositorio con el Jenkinsfile
             GIT_URL_2 = 'https://github.com/DiegoGuimo/devops.git'  // URL del repositorio de las bibliotecas
             NodeJS = 'NodeJS'  // Herramienta de Node.js
             SonarScannerHome = 'sonar-scanner'  // Herramienta de SonarScanner
