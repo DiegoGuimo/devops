@@ -7,7 +7,7 @@ def call() {
     pipeline {
         agent any
         environment {
-            projectGitName = 'my-project'
+            projectGitName = 'react-test-jenkinsfile'
             
             // Usar la credencial DockerHubUser para Docker Hub
             DOCKERHUB_USERNAME = credentials('DockerHubUser')  // DockerHubUser como credencial para el usuario de DockerHub
