@@ -1,56 +1,77 @@
-def call() {
-    pipeline {
-        agent any
-        tools {
-            nodejs 'NodeJS'
+pipeline {
+    agent any
+    environment {
+        projectGitName = 'my-project'
+        DOCKERHUB_USERNAME = credentials('dockerhub-username')
+        DOCKERHUB_PASSWORD = credentials('dockerhub-password')
+    }
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    try {
+                        echo "Building Docker Image..."
+                        org.devops.lb_buildimagen.buildImageDocker(env.projectGitName)
+                        echo "Docker Image built successfully."
+                    } catch (Exception e) {
+                        echo "Error during Docker image build: ${e.message}"
+                        error("Stage failed: Build Docker Image")
+                    }
+                }
+            }
         }
-        environment {
-            GIT_BRANCH_1 = 'master'  // Rama del repositorio donde está el Jenkinsfile
-            GIT_URL_1 = 'https://github.com/DiegoGuimo/FrontEnd.git'  // URL del repositorio con el Jenkinsfile
-            GIT_URL_2 = 'https://github.com/DiegoGuimo/devops.git'  // URL del repositorio de las bibliotecas
-            NodeJS = 'NodeJS'  // Herramienta de Node.js
-            SonarScannerHome = 'sonar-scanner'  // Herramienta de SonarScanner
-            SOURCE = 'src'  // Directorio de los archivos fuente para el análisis
+        stage('Publish to Docker Hub') {
+            steps {
+                script {
+                    try {
+                        echo "Publishing Docker Image to Docker Hub..."
+                        org.devops.lb_publicardockerhub.publicarImage(env.projectGitName)
+                        echo "Docker Image published successfully."
+                    } catch (Exception e) {
+                        echo "Error during Docker image publication: ${e.message}"
+                        error("Stage failed: Publish to Docker Hub")
+                    }
+                }
+            }
         }
-        stages {
-            stage('Clonar Repositorios') {
-                steps {
-                    script {
-                        // Clonamos el repositorio donde está el Jenkinsfile
-                        git url: "${env.GIT_URL_1}", branch: "${env.GIT_BRANCH_1}"
-                        
-                        // Clonamos el repositorio donde están las bibliotecas
-                        dir('devops') {
-                            git url: "${env.GIT_URL_2}", branch: 'feature'
-                        }
+        stage('Deploy Docker Container') {
+            steps {
+                script {
+                    try {
+                        echo "Deploying Docker Container..."
+                        org.devops.lb_deploydocker.despliegueContenedor(env.projectGitName)
+                        echo "Docker Container deployed successfully."
+                    } catch (Exception e) {
+                        echo "Error during Docker container deployment: ${e.message}"
+                        error("Stage failed: Deploy Docker Container")
                     }
                 }
             }
-            stage('Clonar y Construir') {
-                steps {
-                    script {
-                        def lb_buildartefacto = load 'devops/src/org/devops/lb_buildartefacto.groovy'
-
-                        lb_buildartefacto.clone()
-                        lb_buildartefacto.install()
+        }
+        stage('OWASP Analysis') {
+            steps {
+                script {
+                    try {
+                        echo "Starting OWASP Analysis..."
+                        org.devops.lb_owasp.AnalisisOwasp(env.projectGitName)
+                        echo "OWASP Analysis completed successfully."
+                    } catch (Exception e) {
+                        echo "Error during OWASP Analysis: ${e.message}"
+                        error("Stage failed: OWASP Analysis")
                     }
                 }
             }
-            stage('Análisis de SonarQube') {
-                steps {
-                    script {
-                        def lb_analisissonarqube = load 'devops/src/org/devops/lb_analisissonarqube.groovy'
-                        lb_analisissonarqube.analisisSonar(env.GIT_BRANCH_1)
-                    }
-                }
-            }
-            stage('Pruebas') {
-                steps {
-                    script {
-                        sh 'npm test'
-                    }
-                }
-            }
+        }
+    }
+    post {
+        always {
+            echo "Pipeline completed."
+        }
+        success {
+            echo "Pipeline finished successfully."
+        }
+        failure {
+            echo "Pipeline failed. Check the logs for more details."
         }
     }
 }
