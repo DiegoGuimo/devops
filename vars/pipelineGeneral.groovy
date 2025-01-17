@@ -1,3 +1,8 @@
+import org.devops.lb_buildimagen
+import org.devops.lb_deploydocker
+import org.devops.lb_owasp
+import org.devops.lb_publicardockerhub
+
 def call() {
     pipeline {
         agent any
