@@ -3,10 +3,31 @@ def call() {
         agent any
         environment {
             projectGitName = 'my-project'
-            DOCKERHUB_USERNAME = credentials('dockerhub-username')
-            DOCKERHUB_PASSWORD = credentials('dockerhub-password')
+            
+            // Usar la credencial DockerHubUser para Docker Hub
+            DOCKERHUB_USERNAME = credentials('DockerHubUser')  // DockerHubUser como credencial para el usuario de DockerHub
+            DOCKERHUB_PASSWORD = credentials('DockerHubUser')  // La misma credencial se usa para el password (esto depende de cómo esté configurada)
+
+            // Usar la credencial GitHub-Diego para GitHub
+            GITHUB_USERNAME = credentials('GitHub-Diego')  // Credencial para GitHub
+            GITHUB_TOKEN = credentials('GitHub-Diego')  // Puede ser el mismo o una credencial separada para el token
         }
         stages {
+            stage('Clonar Repositorio GitHub') {
+                steps {
+                    script {
+                        try {
+                            echo "Cloning GitHub repository..."
+                            // Clonamos el repositorio usando la credencial correcta de GitHub
+                            git credentialsId: "${env.GITHUB_TOKEN}", url: "${env.UrlGitHub}", branch: 'master'
+                            echo "GitHub repository cloned successfully."
+                        } catch (Exception e) {
+                            echo "Error during GitHub clone: ${e.message}"
+                            error("Stage failed: Cloning GitHub Repository")
+                        }
+                    }
+                }
+            }
             stage('Build Docker Image') {
                 steps {
                     script {
