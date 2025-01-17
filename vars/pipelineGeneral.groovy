@@ -44,7 +44,8 @@ def call() {
                     script {
                         try {
                             echo "Building Docker Image..."
-                            org.devops.lb_buildimagen.buildImageDocker(env.projectGitName)
+                            def buildImagen = new org.devops.lb_buildimagen()
+                            buildImagen.buildImageDocker(env.projectGitName)
                             echo "Docker Image built successfully."
                         } catch (Exception e) {
                             echo "Error during Docker image build: ${e.message}"
