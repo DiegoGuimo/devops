@@ -8,22 +8,28 @@ def call() {
         agent any
         environment {
             projectGitName = 'react-test-jenkinsfile'
-            
-            // Usar la credencial DockerHubUser para Docker Hub
-            DOCKERHUB_USERNAME = credentials('DockerHubUser')  // DockerHubUser como credencial para el usuario de DockerHub
-            DOCKERHUB_PASSWORD = credentials('DockerHubUser')  // La misma credencial se usa para el password (esto depende de cómo esté configurada)
+            // Credenciales de Docker Hub se obtienen desde TOKEN_ID
+            DOCKERHUB_USERNAME = credentials('DockerHubUser')
+            DOCKERHUB_PASSWORD = credentials('DockerHubUser')
 
-            // Usar la credencial GitHub-Diego para GitHub
-            GITHUB_USERNAME = credentials('GitHub-Diego')  // Credencial para GitHub
-            GITHUB_TOKEN = credentials('GitHub-Diego')  // Puede ser el mismo o una credencial separada para el token
+            // Credenciales de GitHub
+            GITHUB_USERNAME = credentials('GitHub-Diego')
+            GITHUB_TOKEN = credentials('GitHub-Diego')
         }
         stages {
+            stage('Validar Variables de Entorno') {
+                steps {
+                    script {
+                        echo "Validando variables de entorno disponibles..."
+                        sh 'printenv | sort' // Muestra todas las variables de entorno disponibles para depuración
+                    }
+                }
+            }
             stage('Clonar Repositorio GitHub') {
                 steps {
                     script {
                         try {
                             echo "Cloning GitHub repository..."
-                            // Clonamos el repositorio usando la credencial correcta de GitHub
                             git credentialsId: "${env.GITHUB_TOKEN}", url: "${env.UrlGitHub}", branch: 'master'
                             echo "GitHub repository cloned successfully."
                         } catch (Exception e) {
