@@ -5,9 +5,9 @@ def despliegueContenedor (projectGitName) {
     sh "docker stop ${projectGitName} || true"
     sh "docker rm ${projectGitName} || true"
     // Descargar y ejecutar el contenedor
-    sh "docker pull diegoguimo182/react-test-jenkinsfile"
+    sh "docker pull diegoguimo182/${projectGitName}"
     sh""" docker run -d --name ${projectGitName} \
     --network=${env.NameNetwork} -p 5174:5174 \
-    --user root diegoguimo182/${projectGitName}
+    --user root diegoguimo182/${projectGitName}:latest
     """
 }
