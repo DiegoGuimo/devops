@@ -1,6 +1,3 @@
-import org.devops.lb_buildimagen
-import org.devops.lb_deploydocker
-import org.devops.lb_owasp
 import org.devops.lb_publicardockerhub
 
 def call() {
@@ -40,7 +37,6 @@ def call() {
                         try {
                             echo "Authenticating to Docker Hub..."
                             withCredentials([usernamePassword(credentialsId: 'DockerHubUser', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                                // Authentication step for Docker Hub
                                 sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                             }
                             echo "Docker Hub authentication successful."
@@ -71,7 +67,9 @@ def call() {
                     script {
                         try {
                             echo "Publishing Docker Image to Docker Hub..."
-                            org.devops.lb_publicardockerhub.publicarImage(env.projectGitName)
+                            // Asegurarse de que la clase y el método estén correctamente definidos y accesibles
+                            def dockerHubPublisher = new org.devops.lb_publicardockerhub()
+                            dockerHubPublisher.publicarImage(env.projectGitName)
                             echo "Docker Image published successfully."
                         } catch (Exception e) {
                             currentBuild.result = 'FAILURE'
