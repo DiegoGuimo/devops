@@ -14,10 +14,6 @@ def call() {
             GIT_URL_1 = 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git'
             GIT_URL_2 = 'https://github.com/DiegoGuimo/devops.git'
             projectGitName = 'react-test-jenkinsfile'
-            DOCKERHUB_USERNAME = credentials('dockerhub-cred-id')
-            DOCKERHUB_PASSWORD = credentials('dockerhub-password-id')
-            GITHUB_USERNAME = credentials('GitHub-Diego')
-            GITHUB_TOKEN = credentials('GitHub-Diego')
         }
         stages {
             stage('Clonar Repositorio GitHub') {
@@ -34,6 +30,23 @@ def call() {
                         } catch (Exception e) {
                             currentBuild.result = 'FAILURE'
                             error "Failed to clone repositories: ${e.getMessage()}"
+                        }
+                    }
+                }
+            }
+            stage('Authenticate Docker Hub') {
+                steps {
+                    script {
+                        try {
+                            echo "Authenticating to Docker Hub..."
+                            withCredentials([usernamePassword(credentialsId: 'DockerHubUser', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                                // Authentication step for Docker Hub
+                                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                            }
+                            echo "Docker Hub authentication successful."
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            error "Docker Hub authentication failed: ${e.getMessage()}"
                         }
                     }
                 }
