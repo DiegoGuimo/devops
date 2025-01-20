@@ -40,7 +40,6 @@ def call() {
                         try {
                             echo "Authenticating to Docker Hub..."
                             withCredentials([usernamePassword(credentialsId: 'DockerHubUser', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                                // Authentication step for Docker Hub
                                 sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                             }
                             echo "Docker Hub authentication successful."
@@ -71,7 +70,8 @@ def call() {
                     script {
                         try {
                             echo "Publishing Docker Image to Docker Hub..."
-                            org.devops.lb_publicardockerhub.publicarImage(env.projectGitName)
+                            def publicadorDockerHub = new org.devops.lb_publicardockerhub()
+                            publicadorDockerHub.publicarImage(env.projectGitName)
                             echo "Docker Image published successfully."
                         } catch (Exception e) {
                             currentBuild.result = 'FAILURE'
@@ -85,7 +85,8 @@ def call() {
                     script {
                         try {
                             echo "Deploying Docker Container..."
-                            org.devops.lb_deploydocker.despliegueContenedor(env.projectGitName)
+                            def deployDocker = new org.devops.lb_deploydocker()
+                            deployDocker.despliegueContenedor(env.projectGitName)
                             echo "Docker Container deployed successfully."
                         } catch (Exception e) {
                             currentBuild.result = 'FAILURE'
@@ -99,7 +100,8 @@ def call() {
                     script {
                         try {
                             echo "Starting OWASP Analysis..."
-                            org.devops.lb_owasp.AnalisisOwasp(env.projectGitName)
+                            def owasp = new org.devops.lb_owasp()
+                            owasp.AnalisisOwasp(env.projectGitName)
                             echo "OWASP Analysis completed successfully."
                         } catch (Exception e) {
                             currentBuild.result = 'FAILURE'
