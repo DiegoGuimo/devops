@@ -6,6 +6,9 @@ import org.devops.lb_publicardockerhub
 def call() {
     pipeline {
         agent any
+        tools {
+            nodejs 'NodeJS'
+        }
         environment {
             GIT_BRANCH_1 = 'master'
             GIT_URL_1 = 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git'
