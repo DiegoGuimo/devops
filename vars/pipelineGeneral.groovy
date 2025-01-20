@@ -7,6 +7,9 @@ def call() {
     pipeline {
         agent any
         environment {
+            GIT_BRANCH_1 = 'master'
+            GIT_URL_1 = 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git'
+            GIT_URL_2 = 'https://github.com/DiegoGuimo/devops.git'
             projectGitName = 'react-test-jenkinsfile'
             DOCKERHUB_USERNAME = credentials('diegoguimo182')
             DOCKERHUB_PASSWORD = credentials('DockerHubUser')
@@ -17,9 +20,11 @@ def call() {
             stage('Clonar Repositorio GitHub') {
                 steps {
                     script {
-                        echo "Cloning GitHub repository..."
-                        git credentialsId: 'GitHub-Diego', url: 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git', branch: 'master'
-                        echo "GitHub repository cloned successfully."
+                        git url: "${env.GIT_URL_1}", branch: "${env.GIT_BRANCH_1}"
+                        
+                        dir('devops') {
+                            git url: "${env.GIT_URL_2}", branch: 'develop'
+                        }
                     }
                 }
             }
