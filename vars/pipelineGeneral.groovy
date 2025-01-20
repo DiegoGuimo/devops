@@ -108,7 +108,8 @@ def call() {
                     script {
                         try {
                             echo "Starting OWASP Analysis..."
-                            org.devops.lb_owasp.AnalisisOwasp(env.projectGitName)
+                            def owaspAnalysis = new org.devops.lb_owasp()
+                            owaspAnalysis.AnalisisOwasp(env.projectGitName)
                             echo "OWASP Analysis completed successfully."
                         } catch (Exception e) {
                             currentBuild.result = 'FAILURE'
