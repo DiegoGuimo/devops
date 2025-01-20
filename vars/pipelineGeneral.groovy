@@ -14,8 +14,8 @@ def call() {
             GIT_URL_1 = 'https://github.com/DiegoGuimo/react-test-jenkinsfile.git'
             GIT_URL_2 = 'https://github.com/DiegoGuimo/devops.git'
             projectGitName = 'react-test-jenkinsfile'
-            DOCKERHUB_USERNAME = credentials('diegoguimo182')
-            DOCKERHUB_PASSWORD = credentials('DockerHubUser')
+            DOCKERHUB_USERNAME = credentials('dockerhub-cred-id')
+            DOCKERHUB_PASSWORD = credentials('dockerhub-password-id')
             GITHUB_USERNAME = credentials('GitHub-Diego')
             GITHUB_TOKEN = credentials('GitHub-Diego')
         }
