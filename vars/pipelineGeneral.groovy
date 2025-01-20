@@ -23,10 +23,17 @@ def call() {
             stage('Clonar Repositorio GitHub') {
                 steps {
                     script {
-                        git url: "${env.GIT_URL_1}", branch: "${env.GIT_BRANCH_1}"
-                        
-                        dir('devops') {
-                            git url: "${env.GIT_URL_2}", branch: 'develop'
+                        try {
+                            echo "Cloning repositories from GitHub..."
+                            git url: "${env.GIT_URL_1}", branch: "${env.GIT_BRANCH_1}"
+                            
+                            dir('devops') {
+                                git url: "${env.GIT_URL_2}", branch: 'develop'
+                            }
+                            echo "Repositories cloned successfully."
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            error "Failed to clone repositories: ${e.getMessage()}"
                         }
                     }
                 }
@@ -34,37 +41,57 @@ def call() {
             stage('Build Docker Image') {
                 steps {
                     script {
-                        echo "Building Docker Image..."
-                        def buildImagen = new org.devops.lb_buildimagen()
-                        buildImagen.buildImageDocker(env.projectGitName)
-                        echo "Docker Image built successfully."
+                        try {
+                            echo "Building Docker Image..."
+                            def buildImagen = new org.devops.lb_buildimagen()
+                            buildImagen.buildImageDocker(env.projectGitName)
+                            echo "Docker Image built successfully."
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            error "Failed to build Docker image: ${e.getMessage()}"
+                        }
                     }
                 }
             }
             stage('Publish to Docker Hub') {
                 steps {
                     script {
-                        echo "Publishing Docker Image to Docker Hub..."
-                        org.devops.lb_publicardockerhub.publicarImage(env.projectGitName)
-                        echo "Docker Image published successfully."
+                        try {
+                            echo "Publishing Docker Image to Docker Hub..."
+                            org.devops.lb_publicardockerhub.publicarImage(env.projectGitName)
+                            echo "Docker Image published successfully."
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            error "Failed to publish Docker image to Docker Hub: ${e.getMessage()}"
+                        }
                     }
                 }
             }
             stage('Deploy Docker Container') {
                 steps {
                     script {
-                        echo "Deploying Docker Container..."
-                        org.devops.lb_deploydocker.despliegueContenedor(env.projectGitName)
-                        echo "Docker Container deployed successfully."
+                        try {
+                            echo "Deploying Docker Container..."
+                            org.devops.lb_deploydocker.despliegueContenedor(env.projectGitName)
+                            echo "Docker Container deployed successfully."
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            error "Failed to deploy Docker container: ${e.getMessage()}"
+                        }
                     }
                 }
             }
             stage('OWASP Analysis') {
                 steps {
                     script {
-                        echo "Starting OWASP Analysis..."
-                        org.devops.lb_owasp.AnalisisOwasp(env.projectGitName)
-                        echo "OWASP Analysis completed successfully."
+                        try {
+                            echo "Starting OWASP Analysis..."
+                            org.devops.lb_owasp.AnalisisOwasp(env.projectGitName)
+                            echo "OWASP Analysis completed successfully."
+                        } catch (Exception e) {
+                            currentBuild.result = 'FAILURE'
+                            error "OWASP Analysis failed: ${e.getMessage()}"
+                        }
                     }
                 }
             }
