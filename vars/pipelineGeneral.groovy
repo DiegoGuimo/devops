@@ -9,7 +9,7 @@ def call() {
         environment {
             projectGitName = 'react-test-jenkinsfile'
             // Credenciales de Docker Hub se obtienen desde TOKEN_ID
-            DOCKERHUB_USERNAME = credentials('DockerHubUser')
+            DOCKERHUB_USERNAME = credentials('diegoguimo182')
             DOCKERHUB_PASSWORD = credentials('DockerHubUser')
 
             // Credenciales de GitHub
