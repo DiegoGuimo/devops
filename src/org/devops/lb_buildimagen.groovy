@@ -1,19 +1,15 @@
-stage('Build Docker Image') {
-    steps {
-        script {
-            try {
-                echo "Building Docker Image..."
-                def buildImagen = new org.devops.lb_buildimagen()
-                buildImagen.buildImageDocker(env.projectGitName)
+package org.devops
 
-                // Verificar las imágenes disponibles después de la construcción
-                sh 'docker images'
+def buildImageDocker(projectName) {
+    def sanitizedProjectName = projectName.replaceAll("[^a-zA-Z0-9.-]", "-")
+    
+    sh """
+    echo "Docker username: ${env.DOCKERHUB_USERNAME_USR}"
+    echo "Project name: ${projectName}"
+    """
 
-                echo "Docker Image built successfully."
-            } catch (Exception e) {
-                currentBuild.result = 'FAILURE'
-                error "Failed to build Docker image: ${e.getMessage()}"
-            }
-        }
-    }
+    sh """
+        docker build --no-cache -t ${env.DOCKERHUB_USERNAME}/${sanitizedProjectName}:latest .
+    """
+    echo "Sanitized project name for Docker Image: ${sanitizedProjectName}"
 }
