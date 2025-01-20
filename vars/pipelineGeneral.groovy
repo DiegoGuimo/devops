@@ -1,4 +1,8 @@
 import org.devops.lb_publicardockerhub
+import org.devops.lb_deploydocker
+import org.devops.lb_publicardockerhub
+import org.devops.lb_buildimagen
+import org.devops.lb_owasp
 
 def call() {
     pipeline {
@@ -87,7 +91,9 @@ def call() {
                     script {
                         try {
                             echo "Deploying Docker Container..."
-                            org.devops.lb_deploydocker.despliegueContenedor(env.projectGitName)
+                            // Instanciar la clase correctamente
+                            def deployer = new org.devops.lb_deploydocker()
+                            deployer.despliegueContenedor(env.projectGitName)
                             echo "Docker Container deployed successfully."
                         } catch (Exception e) {
                             currentBuild.result = 'FAILURE'
@@ -96,6 +102,7 @@ def call() {
                     }
                 }
             }
+
             stage('OWASP Analysis') {
                 steps {
                     script {
